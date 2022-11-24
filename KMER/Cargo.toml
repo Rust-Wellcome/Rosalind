@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 bio-seq = "0.8.3"
 itertools = "0.8.2"
+bio-streams = { git="https://github.com/jeff-k/bio-streams.git" }

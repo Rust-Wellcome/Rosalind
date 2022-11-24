@@ -1,5 +1,5 @@
 # Rosalind
-Solutions to the [Rosalind problem set](https://rosalind.info/problems/list-view/)
+Solutions to the [Rosalind problem set](https://rosalind.info/problems/list-view/) for the rust-users study group
 
 | Problem | Description |
 | ------- | ----------- |

@@ -10,13 +10,16 @@
 /// Return: The 4-mer composition of s.
 extern crate bio_seq;
 
+use std::env;
+use std::fs::File;
+use std::io::BufReader;
+
 use itertools::Itertools;
 
-use bio_seq::codec::dna::Dna;
-use bio_seq::codec::Codec;
-use bio_seq::dna;
-use bio_seq::FromStr;
+use bio_seq::codec::{dna::Dna, Codec};
 use bio_seq::{Seq, SeqSlice};
+
+use bio_streams::fasta::Fasta;
 
 /// Take a sequence of DNA and return the tetramer composition
 /// as a histogram represented by an array of integers
@@ -26,7 +29,7 @@ fn kmer_histogram<C: Codec, const K: usize>(seq: &SeqSlice<C>) -> Vec<usize> {
     //
     // For dna::Dna this is 2, so our histogram will need (2^2)^4
     // bins to count every possible 4-mer.
-    let mut histo = vec![0; 1 << C::WIDTH * K as u8];
+    let mut histo = vec![0; 1 << (C::WIDTH * K as u8)];
 
     for kmer in seq.kmers::<K>() {
         histo[usize::from(kmer)] += 1;
@@ -47,12 +50,28 @@ fn print_histogram(histo: Vec<usize>) -> String {
 }
 
 fn main() {
-    // TODO: read input from fasta file
-    //let fasta: Fasta<BufReader<File>> = Fasta::new(BufReader:new(File::open("data.fasta").unwrap()));
+    let args: Vec<String> = env::args().collect();
+    let fasta: Fasta<BufReader<File>, Vec<u8>> =
+        Fasta::new(BufReader::new(File::open(&args[1]).unwrap()));
+
+    for contig in fasta {
+        let seq: Seq<Dna> = Seq::from_vec(
+            contig
+                .seq
+                .iter()
+                .rev()
+                .map(|c| Dna::from_char(*c as char).unwrap())
+                .collect::<Vec<Dna>>(),
+        );
+        println!("{}", print_histogram(kmer_histogram::<Dna, 4>(&seq)));
+    }
 }
 
 #[test]
 fn sample_dataset() {
+    use bio_seq::dna;
+    use bio_seq::FromStr;
+
     let fasta = "CTTCGAAAGTTTGGGCCGAGTCTTACAGTCGGTCTTGAAGCAAAGTAACGAACTCCACGGCCCTGACTACCGAACCAGTTGTGAGTACTCAACTGGGTGAGAGTGCAGTCCCTATTGAGTTTCCGAGACTCACCGGGATTTTCGATCCAGCCTCAGTCCAGTCTTGTGGCCAACTCACCAAATGACGTTGGAATATCCCTGTCTAGCTCACGCAGTACTTAGTAAGAGGTCGCTGCAGCGGGGCAAGGAGATCGGAAAATGTGCTCTATATGCGACTAAAGCTCCTAACTTACACGTAGACTTGCCCGTGTTAAAAACTCGGCTCACATGCTGTCTGCGGCTGGCTGTATACAGTATCTACCTAATACCCTTCAGTTCGCCGCACAAAAGCTGGGAGTTACCGCGGAAATCACAG";
 
     // bio-seq 0.8.3 packs kmers in little-endian, we can hack around this
