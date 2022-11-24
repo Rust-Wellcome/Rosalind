@@ -20,15 +20,15 @@ use bio_seq::{Seq, SeqSlice};
 
 /// Take a sequence of DNA and return the tetramer composition
 /// as a histogram represented by an array of integers
-fn kmer_histogram(seq: &SeqSlice<Dna>) -> Vec<usize> {
+fn kmer_histogram<C: Codec, const K: usize>(seq: &SeqSlice<C>) -> Vec<usize> {
     // the WIDTH member of a type implementing Codec tells us
     // how many bits encode each character.
     //
-    // For dna::Dna this is 2, so our histogram will need 2^4
+    // For dna::Dna this is 2, so our histogram will need (2^2)^4
     // bins to count every possible 4-mer.
-    let mut histo = vec![0; 1 << Dna::WIDTH * 4];
+    let mut histo = vec![0; 1 << C::WIDTH * K as u8];
 
-    for kmer in seq.kmers::<4>() {
+    for kmer in seq.kmers::<K>() {
         histo[usize::from(kmer)] += 1;
     }
 
@@ -58,7 +58,7 @@ fn sample_dataset() {
     // bio-seq 0.8.3 packs kmers in little-endian, we can hack around this
     // by reversing the sequence
     let rosalind_6431: Seq<Dna> = dna!(&fasta.chars().rev().collect::<String>());
-    let bins: Vec<usize> = kmer_histogram(&rosalind_6431);
+    let bins: Vec<usize> = kmer_histogram::<Dna, 4>(&rosalind_6431);
 
     assert_eq!(print_histogram(bins), "4 1 4 3 0 1 1 5 1 3 1 2 2 1 2 0 1 1 3 1 2 1 3 1 1 1 1 2 2 5 1 3 0 2 2 1 1 1 1 3 1 0 0 1 5 5 1 5 0 2 0 2 1 2 1 1 1 2 0 1 0 0 1 1 3 2 1 0 3 2 3 0 0 2 0 8 0 0 1 0 2 1 3 0 0 0 1 4 3 2 1 1 3 1 2 1 3 1 2 1 2 1 1 1 2 3 2 1 1 0 1 1 3 2 1 2 6 2 1 1 1 2 3 3 3 2 3 0 3 2 1 1 0 0 1 4 3 0 1 5 0 2 0 1 2 1 3 0 1 2 2 1 1 0 3 0 0 4 5 0 3 0 2 1 1 3 0 3 2 2 1 1 0 2 1 0 2 2 1 2 0 2 2 5 2 2 1 1 2 1 2 2 2 2 1 1 3 4 0 2 1 1 0 1 2 2 1 1 1 5 2 0 3 2 1 1 2 2 3 0 3 0 1 3 1 2 3 0 2 1 2 2 1 2 3 0 1 2 3 1 1 3 1 0 1 1 3 0 2 1 2 2 0 2 1 1");
 }
