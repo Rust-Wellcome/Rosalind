@@ -1,5 +1,5 @@
 # Rosalind
-Solutions to the [https://rosalind.info/problems/list-view/](Rosalind problem set)
+Solutions to the [Rosalind problem set](https://rosalind.info/problems/list-view/)
 
 | Problem | Description |
 | ------- | ----------- |
