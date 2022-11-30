@@ -5,7 +5,7 @@ Solutions to the [Rosalind problem set](https://rosalind.info/problems/list-view
 
 ### Install rust
 
-Full instructions here: [https://www.rust-lang.org/tools/install](rust-lang.org/tools/install)
+Full instructions here: [rust-lang.org/tools/install](https://www.rust-lang.org/tools/install)
 
 For Linux and macOS:
 
