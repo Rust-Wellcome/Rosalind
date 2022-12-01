@@ -1,4 +1,4 @@
-# Rosalind
+# Rosalind 🦀🧬
 Solutions to the [Rosalind problem set](https://rosalind.info/problems/list-view/) for the rust-users study group
 
 ## Getting started
@@ -22,6 +22,28 @@ Or join the [https://github.com/Rust-Wellcome](Rust@Wellcome) organisation and c
 ```
 git@github.com:Rust-Wellcome/Rosalind.git
 ```
+
+### Choose a problem and add it
+
+```
+cd Rosalind
+cargo init --bin PROBLEM
+```
+
+The Rosalind problems come with sample input and output. Use these to set up a unittest in `main.rs`:
+
+```rust
+#[test]
+fn sample_dataset() {
+    let sequence = "AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC";
+
+    assert_eq!(count_nucleotides(&sequence), vec![20, 12, 17, 21]);
+}
+```
+
+### Merge your results to this repo
+
+Don't forget to add it to the table below!
 
 ## Problems and Solutions
 
